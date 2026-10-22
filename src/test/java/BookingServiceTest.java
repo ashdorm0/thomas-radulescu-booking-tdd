@@ -85,4 +85,19 @@ class BookingServiceTest {
 
         assertNotNull(booking);
     }
+
+    @Test
+    void overlappingBookingsInSameRoomAreRejected() {
+        service.book(
+                "alice",
+                "R1",
+                slot(10, 12));
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> service.book(
+                        "bob",
+                        "R1",
+                        slot(11, 13)));
+    }
 }
