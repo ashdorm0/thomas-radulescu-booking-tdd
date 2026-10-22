@@ -27,4 +27,22 @@ class TimeSlotTest {
                 IllegalArgumentException.class,
                 () -> new TimeSlot(ten, ten));
     }
+
+    @Test
+    void nullStartIsRejected() {
+        LocalDateTime end = LocalDateTime.of(2027, 1, 11, 11, 0);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new TimeSlot(null, end));
+    }
+
+    @Test
+    void nullEndIsRejected() {
+        LocalDateTime start = LocalDateTime.of(2027, 1, 11, 10, 0);
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new TimeSlot(start, null));
+    }
 }
