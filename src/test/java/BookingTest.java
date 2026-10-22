@@ -7,9 +7,8 @@ class BookingTest {
 
     private static TimeSlot createSlot() {
         return new TimeSlot(
-            LocalDateTime.of(2027, 1, 11, 10, 0),
-            LocalDateTime.of(2027, 1, 11, 11, 0)
-        );
+                LocalDateTime.of(2027, 1, 11, 10, 0),
+                LocalDateTime.of(2027, 1, 11, 11, 0));
     }
 
     @Test
@@ -17,13 +16,24 @@ class BookingTest {
         TimeSlot slot = createSlot();
 
         Booking booking = new Booking(
-            "alice",
-            "R1",
-            slot
-        );
+                "alice",
+                "R1",
+                slot);
 
         assertEquals("alice", booking.getUserId());
         assertEquals("R1", booking.getRoomId());
         assertEquals(slot, booking.getSlot());
+    }
+
+    @Test
+    void equalBookingsHaveEqualHashCodes() {
+        Booking first = new Booking(
+                "alice", "R1", createSlot());
+
+        Booking second = new Booking(
+                "alice", "R1", createSlot());
+
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
     }
 }
