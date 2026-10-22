@@ -1,6 +1,8 @@
 import java.time.LocalDateTime;
 
 public final class TimeSlot {
+    private final LocalDateTime start;
+    private final LocalDateTime end;
 
     public TimeSlot(LocalDateTime start, LocalDateTime end) {
         if (!end.isAfter(start)) {
@@ -12,13 +14,15 @@ public final class TimeSlot {
             throw new IllegalArgumentException(
                     "start and end cannot be null");
         }
+        this.start = start;
+        this.end = end;
     }
 
     public LocalDateTime getStart() {
-        return null;
+        return start;
     }
 
     public LocalDateTime getEnd() {
-        return null;
+        return end;
     }
 }
