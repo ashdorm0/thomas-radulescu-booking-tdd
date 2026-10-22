@@ -75,4 +75,14 @@ class BookingServiceTest {
                         "R1",
                         slot(10, 14)));
     }
+
+    @Test
+    void exactlyThreeHoursIsAllowed() {
+        Booking booking = service.book(
+                "alice",
+                "R1",
+                slot(10, 13));
+
+        assertNotNull(booking);
+    }
 }
