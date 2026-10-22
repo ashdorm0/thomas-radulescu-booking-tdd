@@ -140,4 +140,26 @@ class BookingServiceTest {
                         "R1",
                         slot(10, 11)));
     }
+
+    @Test
+    void cancellationReleasesBookedSlot() {
+        TimeSlot requestedSlot = slot(10, 11);
+
+        service.book(
+                "alice",
+                "R1",
+                requestedSlot);
+
+        service.cancel(
+                "alice",
+                "R1",
+                requestedSlot);
+
+        Booking bobBooking = service.book(
+                "bob",
+                "R1",
+                requestedSlot);
+
+        assertNotNull(bobBooking);
+    }
 }
