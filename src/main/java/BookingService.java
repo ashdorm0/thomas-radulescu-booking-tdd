@@ -42,6 +42,12 @@ public class BookingService {
                         "Room is already booked");
             }
         }
+        for (Booking existing : bookings.findByUser(userId)) {
+            if (existing.getSlot().overlaps(slot)) {
+                throw new IllegalStateException(
+                        "User already has an overlapping booking");
+            }
+        }
         Booking booking = new Booking(
                 userId, roomId, slot);
 
