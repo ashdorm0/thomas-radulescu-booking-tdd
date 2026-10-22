@@ -32,6 +32,10 @@ public class BookingService {
             throw new IllegalArgumentException(
                     "Booking must start in the future");
         }
+        if (slot.duration().compareTo(MAX_SLOT) > 0) {
+            throw new IllegalArgumentException(
+                    "Booking exceeds maximum duration");
+        }
         Booking booking = new Booking(
                 userId, roomId, slot);
 
