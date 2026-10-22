@@ -13,4 +13,12 @@ public final class TimeSlot {
                     "start and end cannot be null");
         }
     }
+
+    public LocalDateTime getStart() {
+        return null;
+    }
+
+    public LocalDateTime getEnd() {
+        return null;
+    }
 }
