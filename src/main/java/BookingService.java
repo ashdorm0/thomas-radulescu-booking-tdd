@@ -36,24 +36,21 @@ public class BookingService {
             throw new IllegalArgumentException(
                     "Booking exceeds maximum duration");
         }
-        for (Booking existing : bookings.findByRoom(roomId)) {
-            if (existing.getSlot().overlaps(slot)) {
-                throw new IllegalStateException(
-                        "Room is already booked");
-            }
+        if (hasOverlap(bookings.findByRoom(roomId), slot)) {
+            throw new IllegalStateException(
+                    "Room is already booked");
         }
-        for (Booking existing : bookings.findByUser(userId)) {
-            if (existing.getSlot().overlaps(slot)) {
-                throw new IllegalStateException(
-                        "User already has an overlapping booking");
-            }
+        if (hasOverlap(bookings.findByUser(userId), slot)) {
+            throw new IllegalStateException(
+                    "User already has an overlapping booking");
         }
-        Booking booking = new Booking(
-                userId, roomId, slot);
 
-        bookings.save(booking);
+    Booking booking = new Booking(
+            userId, roomId, slot);
 
-        return booking;
+    bookings.save(booking);
+
+    return booking;
     }
 
     /** Cancel a user's booking. */
@@ -84,5 +81,18 @@ public class BookingService {
                         b -> b.getSlot().getStart()));
 
         return result;
+    }
+
+    private boolean hasOverlap(
+            List<Booking> existingBookings,
+            TimeSlot requestedSlot) {
+
+        for (Booking booking : existingBookings) {
+            if (booking.getSlot().overlaps(requestedSlot)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
