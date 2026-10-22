@@ -101,4 +101,13 @@ class TimeSlotTest {
                 expected,
                 slot(bStart, bEnd).overlaps(slot(aStart, aEnd)));
     }
+
+    @Test
+    void equalSlotsHaveEqualHashCodes() {
+        TimeSlot first = slot(10, 11);
+        TimeSlot second = slot(10, 11);
+
+        assertEquals(first, second);
+        assertEquals(first.hashCode(), second.hashCode());
+    }
 }
