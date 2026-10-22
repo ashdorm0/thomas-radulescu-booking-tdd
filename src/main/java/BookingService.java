@@ -36,6 +36,12 @@ public class BookingService {
             throw new IllegalArgumentException(
                     "Booking exceeds maximum duration");
         }
+        for (Booking existing : bookings.findByRoom(roomId)) {
+            if (existing.getSlot().overlaps(slot)) {
+                throw new IllegalStateException(
+                        "Room is already booked");
+            }
+        }
         Booking booking = new Booking(
                 userId, roomId, slot);
 
