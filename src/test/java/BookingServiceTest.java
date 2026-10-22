@@ -100,4 +100,19 @@ class BookingServiceTest {
                         "R1",
                         slot(11, 13)));
     }
+
+    @Test
+    void touchingBookingsInSameRoomAreAllowed() {
+        service.book(
+                "alice",
+                "R1",
+                slot(10, 11));
+
+        Booking second = service.book(
+                "bob",
+                "R1",
+                slot(11, 12));
+
+        assertNotNull(second);
+    }
 }
