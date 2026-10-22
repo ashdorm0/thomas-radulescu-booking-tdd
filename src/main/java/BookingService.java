@@ -62,8 +62,13 @@ public class BookingService {
             String roomId,
             TimeSlot slot) {
 
-        throw new UnsupportedOperationException(
-                "TODO: implement using TDD");
+        Booking target = new Booking(
+                userId, roomId, slot);
+
+        if (!bookings.findByUser(userId).contains(target)) {
+            throw new IllegalArgumentException(
+                    "Booking does not exist");
+        }
     }
 
     /** A user's bookings, earliest first. */
