@@ -7,5 +7,10 @@ public final class TimeSlot {
             throw new IllegalArgumentException(
                     "end must be after start");
         }
+
+        if (start == null || end == null) {
+            throw new IllegalArgumentException(
+                    "start and end cannot be null");
+        }
     }
 }
