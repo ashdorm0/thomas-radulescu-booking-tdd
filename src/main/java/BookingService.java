@@ -69,6 +69,8 @@ public class BookingService {
             throw new IllegalArgumentException(
                     "Booking does not exist");
         }
+
+        bookings.delete(target);
     }
 
     /** A user's bookings, earliest first. */
