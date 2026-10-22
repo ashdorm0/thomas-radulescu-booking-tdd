@@ -24,7 +24,10 @@ public class BookingService {
             String userId,
             String roomId,
             TimeSlot slot) {
-
+        if (rooms.findById(roomId) == null) {
+            throw new IllegalArgumentException(
+                    "Room does not exist");
+        }
         Booking booking = new Booking(
                 userId, roomId, slot);
 
