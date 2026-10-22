@@ -162,4 +162,29 @@ class BookingServiceTest {
 
         assertNotNull(bobBooking);
     }
+
+    @Test
+    void bookingsForReturnsChronologicalOrder() {
+        service.book(
+                "alice",
+                "R1",
+                slot(14, 15));
+
+        service.book(
+                "alice",
+                "R1",
+                slot(10, 11));
+
+        List<Booking> result = service.bookingsFor("alice");
+
+        assertEquals(2, result.size());
+
+        assertEquals(
+                slot(10, 11),
+                result.get(0).getSlot());
+
+        assertEquals(
+                slot(14, 15),
+                result.get(1).getSlot());
+    }
 }
