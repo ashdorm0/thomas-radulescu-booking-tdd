@@ -76,7 +76,13 @@ public class BookingService {
     /** A user's bookings, earliest first. */
     public List<Booking> bookingsFor(String userId) {
 
-        throw new UnsupportedOperationException(
-                "TODO: implement using TDD");
+        List<Booking> result = new java.util.ArrayList<>(
+                bookings.findByUser(userId));
+
+        result.sort(
+                java.util.Comparator.comparing(
+                        b -> b.getSlot().getStart()));
+
+        return result;
     }
 }
