@@ -28,6 +28,10 @@ public class BookingService {
             throw new IllegalArgumentException(
                     "Room does not exist");
         }
+        if (!slot.getStart().isAfter(LocalDateTime.now(clock))) {
+            throw new IllegalArgumentException(
+                    "Booking must start in the future");
+        }
         Booking booking = new Booking(
                 userId, roomId, slot);
 
