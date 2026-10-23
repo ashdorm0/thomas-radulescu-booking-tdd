@@ -17,6 +17,12 @@ public class BookingService {
         this.rooms = rooms;
         this.bookings = bookings;
         this.clock = clock;
+        this.rules = List.of(
+                new RoomMustExist(rooms),
+                new BookingMustBeFuture(clock),
+                new MaximumDuration(),
+                new RoomNoOverlap(bookings),
+                new UserNoOverlap(bookings));
     }
 
     /** Book a room for a user. Returns the new booking. */
@@ -24,12 +30,9 @@ public class BookingService {
             String userId,
             String roomId,
             TimeSlot slot) {
-        new RoomMustExist(rooms).check(userId, roomId, slot);
-        new BookingMustBeFuture(clock).check(userId, roomId, slot);
-        new MaximumDuration().check(userId, roomId, slot);
-        new RoomNoOverlap(bookings).check(userId, roomId, slot);
-        new UserNoOverlap(bookings).check(userId, roomId, slot);
-
+        for (BookingRule rule : rules) {
+            rule.check(userId, roomId, slot);
+        }
         Booking booking = new Booking(
                 userId, roomId, slot);
 
@@ -66,18 +69,5 @@ public class BookingService {
                         b -> b.getSlot().getStart()));
 
         return result;
-    }
-
-    private boolean hasOverlap(
-            List<Booking> existingBookings,
-            TimeSlot requestedSlot) {
-
-        for (Booking booking : existingBookings) {
-            if (booking.getSlot().overlaps(requestedSlot)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 }
