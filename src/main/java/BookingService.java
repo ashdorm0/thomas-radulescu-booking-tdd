@@ -27,7 +27,7 @@ public class BookingService {
         new RoomMustExist(rooms).check(userId, roomId, slot);
         new BookingMustBeFuture(clock).check(userId, roomId, slot);
         new MaximumDuration().check(userId, roomId, slot);
-        checkRoomOverlap(roomId, slot);
+        new RoomNoOverlap(bookings).check(userId, roomId, slot);
         checkUserOverlap(userId, slot);
 
         Booking booking = new Booking(
