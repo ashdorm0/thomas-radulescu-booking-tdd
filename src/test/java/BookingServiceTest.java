@@ -6,185 +6,200 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BookingServiceTest {
 
-    private static final Clock CLOCK = Clock.fixed(
-            Instant.parse("2027-01-11T09:00:00Z"),
-            ZoneOffset.UTC);
+        private static final Clock CLOCK = Clock.fixed(
+                        Instant.parse("2027-01-11T09:00:00Z"),
+                        ZoneOffset.UTC);
 
-    private BookingService service;
+        private BookingService service;
 
-    @BeforeEach
-    void setUp() {
-        MemoryRoomRepository rooms = new MemoryRoomRepository();
+        @BeforeEach
+        void setUp() {
+                MemoryRoomRepository rooms = new MemoryRoomRepository();
 
-        rooms.save(new Room("R1", "Room 1"));
-        rooms.save(new Room("R2", "Room 2"));
+                rooms.save(new Room("R1", "Room 1"));
+                rooms.save(new Room("R2", "Room 2"));
 
-        service = new BookingService(
-                rooms,
-                new MemoryBookingRepository(),
-                CLOCK);
-    }
+                service = new BookingService(
+                                rooms,
+                                new MemoryBookingRepository(),
+                                CLOCK);
+        }
 
-    private static TimeSlot slot(
-            int startHour,
-            int endHour) {
+        private static TimeSlot slot(
+                        int startHour,
+                        int endHour) {
 
-        return new TimeSlot(
-                LocalDateTime.of(
-                        2027, 1, 11, startHour, 0),
-                LocalDateTime.of(
-                        2027, 1, 11, endHour, 0));
-    }
+                return new TimeSlot(
+                                LocalDateTime.of(
+                                                2027, 1, 11, startHour, 0),
+                                LocalDateTime.of(
+                                                2027, 1, 11, endHour, 0));
+        }
 
-    @Test
-    void bookingAFreeRoomReturnsTheBooking() {
-        Booking booking = service.book(
-                "alice", "R1", slot(10, 11));
+        @Test
+        void bookingAFreeRoomReturnsTheBooking() {
+                Booking booking = service.book(
+                                "alice", "R1", slot(10, 11));
 
-        assertEquals(
-                new Booking("alice", "R1", slot(10, 11)),
-                booking);
-    }
+                assertEquals(
+                                new Booking("alice", "R1", slot(10, 11)),
+                                booking);
+        }
 
-    @Test
-    void nonexistentRoomIsRejected() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> service.book(
-                        "alice",
-                        "R9",
-                        slot(10, 11)));
-    }
+        @Test
+        void nonexistentRoomIsRejected() {
+                assertThrows(
+                                IllegalArgumentException.class,
+                                () -> service.book(
+                                                "alice",
+                                                "R9",
+                                                slot(10, 11)));
+        }
 
-    @Test
-    void pastBookingIsRejected() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> service.book(
-                        "alice",
-                        "R1",
-                        slot(7, 8)));
-    }
+        @Test
+        void pastBookingIsRejected() {
+                assertThrows(
+                                IllegalArgumentException.class,
+                                () -> service.book(
+                                                "alice",
+                                                "R1",
+                                                slot(7, 8)));
+        }
 
-    @Test
-    void bookingLongerThanThreeHoursIsRejected() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> service.book(
-                        "alice",
-                        "R1",
-                        slot(10, 14)));
-    }
+        @Test
+        void bookingLongerThanThreeHoursIsRejected() {
+                assertThrows(
+                                IllegalArgumentException.class,
+                                () -> service.book(
+                                                "alice",
+                                                "R1",
+                                                slot(10, 14)));
+        }
 
-    @Test
-    void exactlyThreeHoursIsAllowed() {
-        Booking booking = service.book(
-                "alice",
-                "R1",
-                slot(10, 13));
+        @Test
+        void exactlyThreeHoursIsAllowed() {
+                Booking booking = service.book(
+                                "alice",
+                                "R1",
+                                slot(10, 13));
 
-        assertNotNull(booking);
-    }
+                assertNotNull(booking);
+        }
 
-    @Test
-    void overlappingBookingsInSameRoomAreRejected() {
-        service.book(
-                "alice",
-                "R1",
-                slot(10, 12));
+        @Test
+        void overlappingBookingsInSameRoomAreRejected() {
+                service.book(
+                                "alice",
+                                "R1",
+                                slot(10, 12));
 
-        assertThrows(
-                IllegalStateException.class,
-                () -> service.book(
-                        "bob",
-                        "R1",
-                        slot(11, 13)));
-    }
+                assertThrows(
+                                IllegalStateException.class,
+                                () -> service.book(
+                                                "bob",
+                                                "R1",
+                                                slot(11, 13)));
+        }
 
-    @Test
-    void touchingBookingsInSameRoomAreAllowed() {
-        service.book(
-                "alice",
-                "R1",
-                slot(10, 11));
+        @Test
+        void touchingBookingsInSameRoomAreAllowed() {
+                service.book(
+                                "alice",
+                                "R1",
+                                slot(10, 11));
 
-        Booking second = service.book(
-                "bob",
-                "R1",
-                slot(11, 12));
+                Booking second = service.book(
+                                "bob",
+                                "R1",
+                                slot(11, 12));
 
-        assertNotNull(second);
-    }
+                assertNotNull(second);
+        }
 
-    @Test
-    void userCannotBookOverlappingRooms() {
-        service.book(
-                "alice",
-                "R1",
-                slot(10, 11));
+        @Test
+        void userCannotBookOverlappingRooms() {
+                service.book(
+                                "alice",
+                                "R1",
+                                slot(10, 11));
 
-        assertThrows(
-                IllegalStateException.class,
-                () -> service.book(
-                        "alice",
-                        "R2",
-                        slot(10, 11)));
-    }
+                assertThrows(
+                                IllegalStateException.class,
+                                () -> service.book(
+                                                "alice",
+                                                "R2",
+                                                slot(10, 11)));
+        }
 
-    @Test
-    void cancellingNonexistentBookingIsRejected() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> service.cancel(
-                        "alice",
-                        "R1",
-                        slot(10, 11)));
-    }
+        @Test
+        void cancellingNonexistentBookingIsRejected() {
+                assertThrows(
+                                IllegalArgumentException.class,
+                                () -> service.cancel(
+                                                "alice",
+                                                "R1",
+                                                slot(10, 11)));
+        }
 
-    @Test
-    void cancellationReleasesBookedSlot() {
-        TimeSlot requestedSlot = slot(10, 11);
+        @Test
+        void cancellationReleasesBookedSlot() {
+                TimeSlot requestedSlot = slot(10, 11);
 
-        service.book(
-                "alice",
-                "R1",
-                requestedSlot);
+                service.book(
+                                "alice",
+                                "R1",
+                                requestedSlot);
 
-        service.cancel(
-                "alice",
-                "R1",
-                requestedSlot);
+                service.cancel(
+                                "alice",
+                                "R1",
+                                requestedSlot);
 
-        Booking bobBooking = service.book(
-                "bob",
-                "R1",
-                requestedSlot);
+                Booking bobBooking = service.book(
+                                "bob",
+                                "R1",
+                                requestedSlot);
 
-        assertNotNull(bobBooking);
-    }
+                assertNotNull(bobBooking);
+        }
 
-    @Test
-    void bookingsForReturnsChronologicalOrder() {
-        service.book(
-                "alice",
-                "R1",
-                slot(14, 15));
+        @Test
+        void bookingsForReturnsChronologicalOrder() {
+                service.book(
+                                "alice",
+                                "R1",
+                                slot(14, 15));
 
-        service.book(
-                "alice",
-                "R1",
-                slot(10, 11));
+                service.book(
+                                "alice",
+                                "R1",
+                                slot(10, 11));
 
-        List<Booking> result = service.bookingsFor("alice");
+                List<Booking> result = service.bookingsFor("alice");
 
-        assertEquals(2, result.size());
+                assertEquals(2, result.size());
 
-        assertEquals(
-                slot(10, 11),
-                result.get(0).getSlot());
+                assertEquals(
+                                slot(10, 11),
+                                result.get(0).getSlot());
 
-        assertEquals(
-                slot(14, 15),
-                result.get(1).getSlot());
-    }
+                assertEquals(
+                                slot(14, 15),
+                                result.get(1).getSlot());
+        }
+
+        @Test
+        void fourthUnendedBookingIsRejected() {
+
+                service.book("alice", "R1", slot(10, 11));
+                service.book("alice", "R1", slot(11, 12));
+                service.book("alice", "R1", slot(12, 13));
+
+                assertThrows(
+                                IllegalStateException.class,
+                                () -> service.book(
+                                                "alice",
+                                                "R1",
+                                                slot(13, 14)));
+        }
 }
