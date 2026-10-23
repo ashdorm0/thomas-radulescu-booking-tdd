@@ -230,4 +230,36 @@ class BookingServiceTest {
                                 4,
                                 testService.bookingsFor("alice").size());
         }
+
+        @Test
+        void cancellationFreesUserBookingCapacity() {
+
+                service.book("alice", "R1", slot(10, 11));
+                service.book("alice", "R1", slot(11, 12));
+                service.book("alice", "R1", slot(12, 13));
+
+                service.cancel("alice", "R1", slot(11, 12));
+
+                Booking fourth = service.book(
+                                "alice",
+                                "R1",
+                                slot(13, 14));
+
+                assertNotNull(fourth);
+        }
+
+        @Test
+        void bookingMoreThanFourteenDaysAheadIsRejected() {
+
+                TimeSlot futureSlot = new TimeSlot(
+                                LocalDateTime.of(2027, 1, 26, 10, 0),
+                                LocalDateTime.of(2027, 1, 26, 11, 0));
+
+                assertThrows(
+                                IllegalArgumentException.class,
+                                () -> service.book(
+                                                "alice",
+                                                "R1",
+                                                futureSlot));
+        }
 }
