@@ -26,7 +26,7 @@ public class BookingService {
             TimeSlot slot) {
         new RoomMustExist(rooms).check(userId, roomId, slot);
         new BookingMustBeFuture(clock).check(userId, roomId, slot);
-        checkMaximumDuration(slot);
+        new MaximumDuration().check(userId, roomId, slot);
         checkRoomOverlap(roomId, slot);
         checkUserOverlap(userId, slot);
 
@@ -36,13 +36,6 @@ public class BookingService {
         bookings.save(booking);
 
         return booking;
-    }
-
-    private void checkMaximumDuration(TimeSlot slot) {
-        if (slot.duration().compareTo(MAX_SLOT) > 0) {
-            throw new IllegalArgumentException(
-                    "Booking exceeds maximum duration");
-        }
     }
 
     private void checkRoomOverlap(String roomId, TimeSlot slot) {
