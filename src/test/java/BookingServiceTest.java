@@ -202,4 +202,32 @@ class BookingServiceTest {
                                                 "R1",
                                                 slot(13, 14)));
         }
+
+        @Test
+        void endedBookingsDoNotCountTowardsLimit() {
+
+                MemoryRoomRepository rooms = new MemoryRoomRepository();
+                rooms.save(new Room("R1", "Room 1"));
+
+                MemoryBookingRepository bookings = new MemoryBookingRepository();
+
+                // A historical booking, already ended at 08:00.
+                bookings.save(new Booking(
+                                "alice",
+                                "R1",
+                                slot(7, 8)));
+
+                BookingService testService = new BookingService(
+                                rooms,
+                                bookings,
+                                CLOCK);
+
+                testService.book("alice", "R1", slot(10, 11));
+                testService.book("alice", "R1", slot(11, 12));
+                testService.book("alice", "R1", slot(12, 13));
+
+                assertEquals(
+                                4,
+                                testService.bookingsFor("alice").size());
+        }
 }
