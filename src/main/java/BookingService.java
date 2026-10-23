@@ -24,14 +24,8 @@ public class BookingService {
             String userId,
             String roomId,
             TimeSlot slot) {
-        if (rooms.findById(roomId) == null) {
-            throw new IllegalArgumentException(
-                    "Room does not exist");
-        }
-        if (!slot.getStart().isAfter(LocalDateTime.now(clock))) {
-            throw new IllegalArgumentException(
-                    "Booking must start in the future");
-        }
+        checkRoomExists(roomId);
+
         if (slot.duration().compareTo(MAX_SLOT) > 0) {
             throw new IllegalArgumentException(
                     "Booking exceeds maximum duration");
@@ -45,12 +39,26 @@ public class BookingService {
                     "User already has an overlapping booking");
         }
 
-    Booking booking = new Booking(
-            userId, roomId, slot);
+        Booking booking = new Booking(
+                userId, roomId, slot);
 
-    bookings.save(booking);
+        bookings.save(booking);
 
-    return booking;
+        return booking;
+    }
+
+    private void checkRoomExists(String roomId) {
+        if (rooms.findById(roomId) == null) {
+            throw new IllegalArgumentException(
+                    "Room does not exist");
+        }
+    }
+
+    private void checkFutureBooking(TimeSlot slot) {
+        if (!slot.getStart().isAfter(LocalDateTime.now(clock))) {
+            throw new IllegalArgumentException(
+                    "Booking must start in the future");
+        }
     }
 
     /** Cancel a user's booking. */
