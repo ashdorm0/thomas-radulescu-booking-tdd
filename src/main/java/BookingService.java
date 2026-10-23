@@ -24,20 +24,11 @@ public class BookingService {
             String userId,
             String roomId,
             TimeSlot slot) {
-        checkRoomExists(roomId);
-
-        if (slot.duration().compareTo(MAX_SLOT) > 0) {
-            throw new IllegalArgumentException(
-                    "Booking exceeds maximum duration");
-        }
-        if (hasOverlap(bookings.findByRoom(roomId), slot)) {
-            throw new IllegalStateException(
-                    "Room is already booked");
-        }
-        if (hasOverlap(bookings.findByUser(userId), slot)) {
-            throw new IllegalStateException(
-                    "User already has an overlapping booking");
-        }
+        new RoomMustExist(rooms).check(userId, roomId, slot);
+        checkFutureBooking(slot);
+        checkMaximumDuration(slot);
+        checkRoomOverlap(roomId, slot);
+        checkUserOverlap(userId, slot);
 
         Booking booking = new Booking(
                 userId, roomId, slot);
@@ -47,17 +38,31 @@ public class BookingService {
         return booking;
     }
 
-    private void checkRoomExists(String roomId) {
-        if (rooms.findById(roomId) == null) {
-            throw new IllegalArgumentException(
-                    "Room does not exist");
-        }
-    }
-
     private void checkFutureBooking(TimeSlot slot) {
         if (!slot.getStart().isAfter(LocalDateTime.now(clock))) {
             throw new IllegalArgumentException(
                     "Booking must start in the future");
+        }
+    }
+
+    private void checkMaximumDuration(TimeSlot slot) {
+        if (slot.duration().compareTo(MAX_SLOT) > 0) {
+            throw new IllegalArgumentException(
+                    "Booking exceeds maximum duration");
+        }
+    }
+
+    private void checkRoomOverlap(String roomId, TimeSlot slot) {
+        if (hasOverlap(bookings.findByRoom(roomId), slot)) {
+            throw new IllegalStateException(
+                    "Room is already booked");
+        }
+    }
+
+    private void checkUserOverlap(String userId, TimeSlot slot) {
+        if (hasOverlap(bookings.findByUser(userId), slot)) {
+            throw new IllegalStateException(
+                    "User already has an overlapping booking");
         }
     }
 
