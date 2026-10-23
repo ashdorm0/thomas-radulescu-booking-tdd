@@ -25,7 +25,7 @@ public class BookingService {
             String roomId,
             TimeSlot slot) {
         new RoomMustExist(rooms).check(userId, roomId, slot);
-        checkFutureBooking(slot);
+        new BookingMustBeFuture(clock).check(userId, roomId, slot);
         checkMaximumDuration(slot);
         checkRoomOverlap(roomId, slot);
         checkUserOverlap(userId, slot);
@@ -36,13 +36,6 @@ public class BookingService {
         bookings.save(booking);
 
         return booking;
-    }
-
-    private void checkFutureBooking(TimeSlot slot) {
-        if (!slot.getStart().isAfter(LocalDateTime.now(clock))) {
-            throw new IllegalArgumentException(
-                    "Booking must start in the future");
-        }
     }
 
     private void checkMaximumDuration(TimeSlot slot) {
