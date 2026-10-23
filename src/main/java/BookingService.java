@@ -28,7 +28,7 @@ public class BookingService {
         new BookingMustBeFuture(clock).check(userId, roomId, slot);
         new MaximumDuration().check(userId, roomId, slot);
         new RoomNoOverlap(bookings).check(userId, roomId, slot);
-        checkUserOverlap(userId, slot);
+        new UserNoOverlap(bookings).check(userId, roomId, slot);
 
         Booking booking = new Booking(
                 userId, roomId, slot);
@@ -36,20 +36,6 @@ public class BookingService {
         bookings.save(booking);
 
         return booking;
-    }
-
-    private void checkRoomOverlap(String roomId, TimeSlot slot) {
-        if (hasOverlap(bookings.findByRoom(roomId), slot)) {
-            throw new IllegalStateException(
-                    "Room is already booked");
-        }
-    }
-
-    private void checkUserOverlap(String userId, TimeSlot slot) {
-        if (hasOverlap(bookings.findByUser(userId), slot)) {
-            throw new IllegalStateException(
-                    "User already has an overlapping booking");
-        }
     }
 
     /** Cancel a user's booking. */
