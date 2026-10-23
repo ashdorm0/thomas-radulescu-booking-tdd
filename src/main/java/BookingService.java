@@ -22,7 +22,8 @@ public class BookingService {
                 new BookingMustBeFuture(clock),
                 new MaximumDuration(),
                 new RoomNoOverlap(bookings),
-                new UserNoOverlap(bookings));
+                new UserNoOverlap(bookings),
+                new MaximumUnendedBookings(bookings, clock));
     }
 
     /** Book a room for a user. Returns the new booking. */
