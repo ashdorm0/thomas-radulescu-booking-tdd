@@ -4,7 +4,7 @@ import java.util.List;
 public class BookingService {
 
     public static final Duration MAX_SLOT = Duration.ofHours(3);
-
+    private final List<BookingRule> rules;
     private final IRoomRepository rooms;
     private final IBookingRepository bookings;
     private final Clock clock;
